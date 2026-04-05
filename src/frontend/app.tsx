@@ -321,19 +321,8 @@ function Chat() {
     status
   } = useAgentChat({
     agent,
-    onToolCall: async (event) => {
-      if (
-        "addToolOutput" in event &&
-        event.toolCall.toolName === "getUserTimezone"
-      ) {
-        event.addToolOutput({
-          toolCallId: event.toolCall.toolCallId,
-          output: {
-            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-            localTime: new Date().toLocaleTimeString()
-          }
-        });
-      }
+    onToolCall: async () => {
+      // Client-side tool handling (if needed in the future)
     }
   });
 
@@ -663,10 +652,10 @@ function Chat() {
               contents={
                 <div className="flex flex-wrap justify-center gap-2">
                   {[
-                    "What's the weather in Paris?",
-                    "What timezone am I in?",
-                    "Calculate 5000 * 3",
-                    "Remind me in 5 minutes to take a break"
+                    "Plan a trip from Detroit to SF, April 25-30, $2000 budget",
+                    "What's the weather like in Tokyo?",
+                    "Find me a budget hotel in Barcelona for 3 nights",
+                    "Show me my saved trips"
                   ].map((prompt) => (
                     <Button
                       key={prompt}
