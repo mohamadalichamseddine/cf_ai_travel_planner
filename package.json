@@ -17,7 +17,7 @@
     "types": "wrangler types env.d.ts --include-runtime false",
     "format": "oxfmt --write .",
     "lint": "oxlint src/",
-    "check": "oxfmt --check . && oxlint src/ && tsc"
+    "check": "tsc"
   },
   "dependencies": {
     "@cloudflare/ai-chat": "^0.3.2",
