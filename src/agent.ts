@@ -8,9 +8,11 @@ import {
   stepCountIs,
   streamText,
   tool,
+  type ToolSet,
   type ModelMessage
 } from "ai";
 import { z } from "zod";
+import { getSystemPrompt } from "./prompts/system";
 
 /**
  * The AI SDK's downloadAssets step runs `new URL(data)` on every file
@@ -73,7 +75,7 @@ export class ChatAgent extends AIChatAgent<Env> {
       model: workersai("@cf/moonshotai/kimi-k2.5", {
         sessionAffinity: this.sessionAffinity
       }),
-      system: `You are a helpful assistant that can understand images. You can check the weather, get the user's timezone, run calculations, and schedule tasks. When users share images, describe what you see and answer questions about them.
+      system: `${getSystemPrompt(new Date())}
 
 ${getSchedulePrompt({ date: new Date() })}
 
