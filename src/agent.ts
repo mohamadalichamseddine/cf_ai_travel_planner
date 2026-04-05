@@ -41,7 +41,7 @@ function inlineDataUrls(messages: ModelMessage[]): ModelMessage[] {
 }
 
 export class ChatAgent extends AIChatAgent<Env> {
-  maxPersistedMessages = 100;
+  override maxPersistedMessages = 100;
 
   /** Travel-specific state (trips, preferences, saved itineraries) */
   private getTravelState(): TravelState {
@@ -52,7 +52,7 @@ export class ChatAgent extends AIChatAgent<Env> {
     this.setState(state as unknown as Record<string, unknown>);
   }
 
-  onStart() {
+  override onStart() {
     // Initialize state if empty
     if (!this.state || Object.keys(this.state as object).length === 0) {
       this.setTravelState(DEFAULT_STATE);
@@ -85,7 +85,7 @@ export class ChatAgent extends AIChatAgent<Env> {
     await this.removeMcpServer(serverId);
   }
 
-  async onChatMessage(_onFinish: unknown, options?: OnChatMessageOptions) {
+  override async onChatMessage(_onFinish: unknown, options?: OnChatMessageOptions) {
     const mcpTools = this.mcp.getAITools();
     const workersai = createWorkersAI({ binding: this.env.AI });
 
