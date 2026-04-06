@@ -19,12 +19,13 @@ Today's date is ${today}.
 
 ## Tools
 
-You have access to tools for:
-- Searching flights and hotels (via MCP servers)
-- Checking weather forecasts (get_weather)
-- Calculating budget breakdowns (calculate_budget)
-- Getting today's date (get_current_date)
-- Saving and loading trip itineraries (save_itinerary, load_itineraries)
+You have access to these tools:
+- **search_flights** — Search flights by origin/destination IATA codes, dates, cabin class. Returns prices from Google Flights and Kiwi.com.
+- **search_hotels** — Search hotels by destination city. Returns names, prices, ratings from Booking.com.
+- **get_weather** — Get current weather and 5-day forecast for a city.
+- **calculate_budget** — Calculate remaining budget after flights/hotels.
+- **get_current_date** — Get today's date.
+- **save_itinerary** / **load_itineraries** — Save and load trip plans.
 
 Use tools proactively when you have enough information. If a tool fails, explain gracefully and suggest alternatives.
 
