@@ -10,6 +10,7 @@ import {
 } from "ai";
 import { getSystemPrompt } from "./prompts/system";
 import { createTravelTools } from "./tools";
+
 import type { TravelState } from "./types/state";
 
 const DEFAULT_STATE: TravelState = {
@@ -91,7 +92,8 @@ export class ChatAgent extends AIChatAgent<Env> {
 
     const travelTools = createTravelTools(
       () => this.getTravelState(),
-      (state) => this.setTravelState(state)
+      (state) => this.setTravelState(state),
+      this.env
     );
 
     const result = streamText({
