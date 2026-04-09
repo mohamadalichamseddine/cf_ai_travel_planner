@@ -1,26 +1,6 @@
 export interface TravelState {
   /** Trip currently being planned */
   currentTrip: TripPlan | null;
-
-  /** Finalized & saved itineraries */
-  savedItineraries: SavedItinerary[];
-
-  /** Learned user preferences */
-  preferences: UserPreferences;
-}
-
-export interface UserPreferences {
-  budgetRange?: { min: number; max: number; currency: string };
-  preferredAirlines?: string[];
-  hotelStarRating?: number;
-  travelStyle?: "budget" | "mid-range" | "luxury";
-}
-
-export interface SavedItinerary {
-  id: string;
-  name: string;
-  trip: TripPlan;
-  savedAt: number;
 }
 
 export interface TripPlan {

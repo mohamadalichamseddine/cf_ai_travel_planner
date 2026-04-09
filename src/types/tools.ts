@@ -12,6 +12,3 @@ export interface WeatherParams {
   country?: string;
 }
 
-export interface SaveItineraryParams {
-  name: string;
-}

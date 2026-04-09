@@ -7,7 +7,7 @@ import { z } from "zod";
  */
 export function createHotelTool(env: Env) {
   return {
-    search_hotels: tool({
+    search_hotels_tool: tool({
       description:
         "Search for hotels in a destination. Returns hotel names, prices, ratings, and availability from Booking.com.",
       inputSchema: z.object({
@@ -66,7 +66,9 @@ export function createHotelTool(env: Env) {
 
           if (!response.ok) {
             const text = await response.text();
-            return { error: `Hotel search failed (${response.status}): ${text}` };
+            return {
+              error: `Hotel search failed (${response.status}): ${text}`
+            };
           }
 
           return await response.json();

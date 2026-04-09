@@ -39,6 +39,18 @@ import {
   ImageIcon
 } from "@phosphor-icons/react";
 
+// ── Session ID ───────────────────────────────────────────────────────
+
+function getSessionId(): string {
+  const key = "voyager-session-id";
+  let id = localStorage.getItem(key);
+  if (!id) {
+    id = crypto.randomUUID();
+    localStorage.setItem(key, id);
+  }
+  return id;
+}
+
 // ── Attachment helpers ────────────────────────────────────────────────
 
 interface Attachment {
@@ -244,6 +256,7 @@ function Chat() {
 
   const agent = useAgent<ChatAgent>({
     agent: "ChatAgent",
+    name: getSessionId(),
     onOpen: useCallback(() => setConnected(true), []),
     onClose: useCallback(() => setConnected(false), []),
     onError: useCallback(
@@ -634,9 +647,12 @@ function Chat() {
             <Button
               variant="secondary"
               icon={<TrashIcon size={16} />}
-              onClick={clearHistory}
+              onClick={async () => {
+                clearHistory();
+                await agent.stub.resetTrip();
+              }}
             >
-              Clear
+              New Trip
             </Button>
           </div>
         </div>

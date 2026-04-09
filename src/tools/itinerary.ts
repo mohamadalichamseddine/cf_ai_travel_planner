@@ -1,71 +1,94 @@
 import { tool } from "ai";
 import { z } from "zod";
-import type { TravelState, SavedItinerary } from "../types/state";
+import type { TravelState, TripPlan } from "../types/state";
 
 /**
- * Creates itinerary tools that can read/write agent state.
- * Called from the agent with bound state accessors.
+ * Creates the set_current_trip tool that stores assembled trip data in state.
+ * The LLM calls this after gathering flight/hotel/weather data.
  */
-export function createItineraryTools(
+export function createTripTool(
   getState: () => TravelState,
   setState: (state: TravelState) => void
 ) {
   return {
-    save_itinerary: tool({
+    set_current_trip_tool: tool({
       description:
-        "Save the current trip plan so the user can retrieve it later. Only call this when the user explicitly asks to save.",
+        "Store the assembled trip plan after gathering flight, hotel, and activity data. Call this to persist the trip so it survives page refreshes.",
       inputSchema: z.object({
-        name: z
-          .string()
-          .describe("A short name for this trip, e.g. 'SF April Trip'")
+        origin: z.string().describe("Origin city or airport code"),
+        destination: z.string().describe("Destination city or airport code"),
+        startDate: z.string().describe("Trip start date (YYYY-MM-DD)"),
+        endDate: z.string().describe("Trip end date (YYYY-MM-DD)"),
+        budget: z.number().describe("Total trip budget"),
+        currency: z.string().describe("Currency code (e.g. USD)"),
+        flights: z
+          .array(
+            z.object({
+              airline: z.string(),
+              flightNumber: z.string(),
+              departure: z.string(),
+              arrival: z.string(),
+              duration: z.string(),
+              stops: z.number(),
+              price: z.number(),
+              currency: z.string(),
+              bookingUrl: z.string().optional()
+            })
+          )
+          .describe("Selected flight options"),
+        hotels: z
+          .array(
+            z.object({
+              name: z.string(),
+              rating: z.number(),
+              pricePerNight: z.number(),
+              totalPrice: z.number(),
+              currency: z.string(),
+              amenities: z.array(z.string()),
+              address: z.string(),
+              bookingUrl: z.string().optional()
+            })
+          )
+          .describe("Selected hotel options"),
+        activities: z
+          .array(
+            z.object({
+              name: z.string(),
+              description: z.string(),
+              estimatedCost: z.number(),
+              duration: z.string(),
+              category: z.string()
+            })
+          )
+          .optional()
+          .describe("Planned activities"),
+        totalEstimatedCost: z
+          .number()
+          .describe("Total estimated cost of the trip")
       }),
-      execute: async ({ name }) => {
-        const state = getState();
-        if (!state.currentTrip) {
-          return {
-            error:
-              "No trip is currently being planned. Help the user plan a trip first."
-          };
-        }
-        const itinerary: SavedItinerary = {
+      execute: async (input) => {
+        const trip: TripPlan = {
           id: crypto.randomUUID(),
-          name,
-          trip: state.currentTrip,
-          savedAt: Date.now()
+          origin: input.origin,
+          destination: input.destination,
+          startDate: input.startDate,
+          endDate: input.endDate,
+          budget: input.budget,
+          currency: input.currency,
+          flights: input.flights,
+          hotels: input.hotels,
+          activities: input.activities ?? [],
+          weather: [],
+          totalEstimatedCost: input.totalEstimatedCost,
+          createdAt: Date.now()
         };
-        setState({
-          ...state,
-          savedItineraries: [...state.savedItineraries, itinerary]
-        });
+
+        setState({ ...getState(), currentTrip: trip });
+
         return {
           success: true,
-          id: itinerary.id,
-          name,
-          message: `Itinerary "${name}" saved successfully.`
-        };
-      }
-    }),
-
-    load_itineraries: tool({
-      description:
-        "Load all previously saved trip itineraries for the user.",
-      inputSchema: z.object({}),
-      execute: async () => {
-        const state = getState();
-        const itineraries = state.savedItineraries;
-        if (itineraries.length === 0) {
-          return { message: "No saved itineraries found.", itineraries: [] };
-        }
-        return {
-          count: itineraries.length,
-          itineraries: itineraries.map((it) => ({
-            id: it.id,
-            name: it.name,
-            destination: it.trip.destination,
-            dates: `${it.trip.startDate} to ${it.trip.endDate}`,
-            budget: `${it.trip.budget} ${it.trip.currency}`,
-            savedAt: new Date(it.savedAt).toISOString()
-          }))
+          tripId: trip.id,
+          message: `Trip to ${trip.destination} (${trip.startDate} to ${trip.endDate}) saved.`
         };
       }
     })
