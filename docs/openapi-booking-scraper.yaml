@@ -1,0 +1,614 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Booking Scraper",
+    "description": "Scrape Booking with this hotels scraper and get data about accommodation on Booking.com. You can crawl by keywords or URLs for hotel prices, ratings, addresses, number of reviews, stars. You can also download all that room and hotel data from Booking.com with a few clicks: CSV, JSON, HTML, and Excel",
+    "version": "0.0",
+    "x-build-id": "EX8ybmtnHE5p4NHgT"
+  },
+  "servers": [
+    {
+      "url": "https://api.apify.com/v2"
+    }
+  ],
+  "paths": {
+    "/acts/voyager~booking-scraper/run-sync-get-dataset-items": {
+      "post": {
+        "operationId": "run-sync-get-dataset-items-voyager-booking-scraper",
+        "x-openai-isConsequential": false,
+        "summary": "Executes an Actor, waits for its completion, and returns Actor's dataset items in response.",
+        "tags": [
+          "Run Actor"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/inputSchema"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "token",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Enter your Apify token here"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/acts/voyager~booking-scraper/runs": {
+      "post": {
+        "operationId": "runs-sync-voyager-booking-scraper",
+        "x-openai-isConsequential": false,
+        "summary": "Executes an Actor and returns information about the initiated run in response.",
+        "tags": [
+          "Run Actor"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/inputSchema"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "token",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Enter your Apify token here"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/runsResponseSchema"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/acts/voyager~booking-scraper/run-sync": {
+      "post": {
+        "operationId": "run-sync-voyager-booking-scraper",
+        "x-openai-isConsequential": false,
+        "summary": "Executes an Actor, waits for completion, and returns the OUTPUT from Key-value store in response.",
+        "tags": [
+          "Run Actor"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/inputSchema"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "token",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Enter your Apify token here"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "search": {
+            "title": "Destination",
+            "type": "string",
+            "description": "Insert the destination name here"
+          },
+          "startUrls": {
+            "title": "Or use Start URLs instead",
+            "type": "array",
+            "description": "Insert URLs to start with instead of a destination name. Hotel search URL's filters will be applied, except for the ones in the scraper input. You can also use shared list URLs. These links are generated for properties you saved in your Booking account.",
+            "items": {
+              "type": "object",
+              "required": [
+                "url"
+              ],
+              "properties": {
+                "url": {
+                  "type": "string",
+                  "title": "URL of a web page",
+                  "format": "uri"
+                }
+              }
+            }
+          },
+          "maxItems": {
+            "title": "Max results per destination or URL",
+            "minimum": 1,
+            "type": "integer",
+            "description": "Limit the number of places to be scraped. Input a value over `1000` to activate the 'overcome 1000 results limit' feature."
+          },
+          "extractAdditionalHotelData": {
+            "title": "Scrape additional hotel data ($)",
+            "type": "boolean",
+            "description": "Enables scraping of additional fields for each hotel: <b>surroundings</b> (nearby points of interest and distances) and <b>roomOfferings</b> (available room types with their details).",
+            "default": false
+          },
+          "propertyType": {
+            "title": "Property type",
+            "enum": [
+              "none",
+              "Hotels",
+              "Apartments",
+              "Hostels",
+              "Guest houses",
+              "Homestays",
+              "Bed and breakfasts",
+              "Holiday homes",
+              "Boats",
+              "Villas",
+              "Motels",
+              "Resorts",
+              "Holiday parks",
+              "Campsites",
+              "Luxury tents"
+            ],
+            "type": "string",
+            "description": "Choose type of property",
+            "default": "none"
+          },
+          "sortBy": {
+            "title": "Order results by",
+            "enum": [
+              "bayesian_review_score",
+              "distance_from_search",
+              "class_asc",
+              "price",
+              "review_score_and_price",
+              "class_and_price"
+            ],
+            "type": "string",
+            "description": "Hotel attribute by which the results will be ordered",
+            "default": "distance_from_search"
+          },
+          "minScore": {
+            "title": "Minimum rating",
+            "type": "string",
+            "description": "Minimum rating of a hotel in \"8.4\" format.\n- Searching below a rating of `5` may be very inefficient, as it's not natively supported by Booking."
+          },
+          "starsCountFilter": {
+            "title": "Stars count",
+            "enum": [
+              "any",
+              "1",
+              "2",
+              "3",
+              "4",
+              "5",
+              "unrated"
+            ],
+            "type": "string",
+            "description": "Only scrape places with the selected stars count. Also includes Booking's apartment-like properties 'square' rating.",
+            "default": "any"
+          },
+          "currency": {
+            "title": "Preferred currency",
+            "enum": [
+              "ARS",
+              "AUD",
+              "AZN",
+              "BHD",
+              "BRL",
+              "BGN",
+              "CAD",
+              "XOF",
+              "CLP",
+              "CNY",
+              "COP",
+              "CZK",
+              "DKK",
+              "EGP",
+              "EUR",
+              "FJD",
+              "GEL",
+              "HKD",
+              "HUF",
+              "INR",
+              "IDR",
+              "ILS",
+              "JPY",
+              "JOD",
+              "KZT",
+              "KRW",
+              "KWD",
+              "MYR",
+              "MXN",
+              "MDL",
+              "NAD",
+              "TWD",
+              "NZD",
+              "NOK",
+              "OMR",
+              "PLN",
+              "GBP",
+              "QAR",
+              "RON",
+              "RUB",
+              "SAR",
+              "SGD",
+              "ZAR",
+              "SEK",
+              "CHF",
+              "THB",
+              "TRY",
+              "AED",
+              "USD",
+              "UAH"
+            ],
+            "type": "string",
+            "description": "Currency to be set on the website",
+            "default": "USD"
+          },
+          "language": {
+            "title": "Language",
+            "enum": [
+              "en-gb",
+              "en-us",
+              "de",
+              "nl",
+              "fr",
+              "es",
+              "es-ar",
+              "ca",
+              "it",
+              "pt-pt",
+              "pt-br",
+              "no",
+              "fi",
+              "sv",
+              "da",
+              "cs",
+              "hu",
+              "ro",
+              "ja",
+              "zh-cn",
+              "zh-tw",
+              "pl",
+              "el",
+              "ru",
+              "tr",
+              "bg",
+              "ar",
+              "ko",
+              "he",
+              "lv",
+              "uk",
+              "id",
+              "ms",
+              "th",
+              "et",
+              "hr",
+              "lt",
+              "sk",
+              "sr",
+              "sl",
+              "vi",
+              "tl",
+              "is"
+            ],
+            "type": "string",
+            "description": "Language to be set on the website (does not apply to reviews)",
+            "default": "en-gb"
+          },
+          "checkIn": {
+            "title": "Check-in date",
+            "pattern": "^(\\d{4})-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])$|^(\\d+)\\s*(day|week|month|year)s?$",
+            "type": "string",
+            "description": "Select the check-in date in format YYYY-MM-DD or {number} {unit}.\n- ***Input the date in the UTC timezone!***\nBooking uses the UTC timezone for all check-in and check-out dates, so we do the same."
+          },
+          "checkOut": {
+            "title": "Check-out date",
+            "pattern": "^(\\d{4})-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])$|^(\\d+)\\s*(day|week|month|year)s?$",
+            "type": "string",
+            "description": "Select the check-out date in format YYYY-MM-DD or {number} {unit}.\n- ***Input the date in the UTC timezone!***\nBooking uses the UTC timezone for all check-in and check-out dates, so we do the same."
+          },
+          "flexWindow": {
+            "title": "Stay date flexibility (days)",
+            "enum": [
+              "0",
+              "1",
+              "2",
+              "3",
+              "7"
+            ],
+            "type": "string",
+            "description": "Number of days to flex around the check-in and check-out dates. E.g. setting `3` will scrape hotels with a possible date range up to 3 days before and 3 days after the selected dates."
+          },
+          "rooms": {
+            "title": "Number of rooms",
+            "minimum": 1,
+            "maximum": 50,
+            "type": "integer",
+            "description": "",
+            "default": 1
+          },
+          "adults": {
+            "title": "Number of adults",
+            "minimum": 1,
+            "maximum": 50,
+            "type": "integer",
+            "description": "",
+            "default": 2
+          },
+          "children": {
+            "title": "Number of children",
+            "minimum": 0,
+            "maximum": 50,
+            "type": "integer",
+            "description": "",
+            "default": 0
+          },
+          "minMaxPrice": {
+            "title": "Price range",
+            "type": "string",
+            "description": "Insert the minimum and maximum price per night, e.g. '100-150' or '100+.'"
+          }
+        }
+      },
+      "runsResponseSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "actId": {
+                "type": "string"
+              },
+              "userId": {
+                "type": "string"
+              },
+              "startedAt": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2025-01-08T00:00:00.000Z"
+              },
+              "finishedAt": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2025-01-08T00:00:00.000Z"
+              },
+              "status": {
+                "type": "string",
+                "example": "READY"
+              },
+              "meta": {
+                "type": "object",
+                "properties": {
+                  "origin": {
+                    "type": "string",
+                    "example": "API"
+                  },
+                  "userAgent": {
+                    "type": "string"
+                  }
+                }
+              },
+              "stats": {
+                "type": "object",
+                "properties": {
+                  "inputBodyLen": {
+                    "type": "integer",
+                    "example": 2000
+                  },
+                  "rebootCount": {
+                    "type": "integer",
+                    "example": 0
+                  },
+                  "restartCount": {
+                    "type": "integer",
+                    "example": 0
+                  },
+                  "resurrectCount": {
+                    "type": "integer",
+                    "example": 0
+                  },
+                  "computeUnits": {
+                    "type": "integer",
+                    "example": 0
+                  }
+                }
+              },
+              "options": {
+                "type": "object",
+                "properties": {
+                  "build": {
+                    "type": "string",
+                    "example": "latest"
+                  },
+                  "timeoutSecs": {
+                    "type": "integer",
+                    "example": 300
+                  },
+                  "memoryMbytes": {
+                    "type": "integer",
+                    "example": 1024
+                  },
+                  "diskMbytes": {
+                    "type": "integer",
+                    "example": 2048
+                  }
+                }
+              },
+              "buildId": {
+                "type": "string"
+              },
+              "defaultKeyValueStoreId": {
+                "type": "string"
+              },
+              "defaultDatasetId": {
+                "type": "string"
+              },
+              "defaultRequestQueueId": {
+                "type": "string"
+              },
+              "buildNumber": {
+                "type": "string",
+                "example": "1.0.0"
+              },
+              "containerUrl": {
+                "type": "string"
+              },
+              "usage": {
+                "type": "object",
+                "properties": {
+                  "ACTOR_COMPUTE_UNITS": {
+                    "type": "integer",
+                    "example": 0
+                  },
+                  "DATASET_READS": {
+                    "type": "integer",
+                    "example": 0
+                  },
+                  "DATASET_WRITES": {
+                    "type": "integer",
+                    "example": 0
+                  },
+                  "KEY_VALUE_STORE_READS": {
+                    "type": "integer",
+                    "example": 0
+                  },
+                  "KEY_VALUE_STORE_WRITES": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "KEY_VALUE_STORE_LISTS": {
+                    "type": "integer",
+                    "example": 0
+                  },
+                  "REQUEST_QUEUE_READS": {
+                    "type": "integer",
+                    "example": 0
+                  },
+                  "REQUEST_QUEUE_WRITES": {
+                    "type": "integer",
+                    "example": 0
+                  },
+                  "DATA_TRANSFER_INTERNAL_GBYTES": {
+                    "type": "integer",
+                    "example": 0
+                  },
+                  "DATA_TRANSFER_EXTERNAL_GBYTES": {
+                    "type": "integer",
+                    "example": 0
+                  },
+                  "PROXY_RESIDENTIAL_TRANSFER_GBYTES": {
+                    "type": "integer",
+                    "example": 0
+                  },
+                  "PROXY_SERPS": {
+                    "type": "integer",
+                    "example": 0
+                  }
+                }
+              },
+              "usageTotalUsd": {
+                "type": "number",
+                "example": 0.00005
+              },
+              "usageUsd": {
+                "type": "object",
+                "properties": {
+                  "ACTOR_COMPUTE_UNITS": {
+                    "type": "integer",
+                    "example": 0
+                  },
+                  "DATASET_READS": {
+                    "type": "integer",
+                    "example": 0
+                  },
+                  "DATASET_WRITES": {
+                    "type": "integer",
+                    "example": 0
+                  },
+                  "KEY_VALUE_STORE_READS": {
+                    "type": "integer",
+                    "example": 0
+                  },
+                  "KEY_VALUE_STORE_WRITES": {
+                    "type": "number",
+                    "example": 0.00005
+                  },
+                  "KEY_VALUE_STORE_LISTS": {
+                    "type": "integer",
+                    "example": 0
+                  },
+                  "REQUEST_QUEUE_READS": {
+                    "type": "integer",
+                    "example": 0
+                  },
+                  "REQUEST_QUEUE_WRITES": {
+                    "type": "integer",
+                    "example": 0
+                  },
+                  "DATA_TRANSFER_INTERNAL_GBYTES": {
+                    "type": "integer",
+                    "example": 0
+                  },
+                  "DATA_TRANSFER_EXTERNAL_GBYTES": {
+                    "type": "integer",
+                    "example": 0
+                  },
+                  "PROXY_RESIDENTIAL_TRANSFER_GBYTES": {
+                    "type": "integer",
+                    "example": 0
+                  },
+                  "PROXY_SERPS": {
+                    "type": "integer",
+                    "example": 0
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -10,7 +10,6 @@ import {
   Empty,
   InputArea,
   Surface,
-  Switch,
   Text
 } from "@cloudflare/kumo";
 import { Toasty, useKumoToastManager } from "@cloudflare/kumo/components/toast";
@@ -29,7 +28,7 @@ import {
   XCircleIcon,
   BrainIcon,
   CaretDownIcon,
-  BugIcon,
+  AirplaneTiltIcon,
   PlugsConnectedIcon,
   PlusIcon,
   SignInIcon,
@@ -49,6 +48,26 @@ function getSessionId(): string {
     localStorage.setItem(key, id);
   }
   return id;
+}
+
+// ── Quick prompts ────────────────────────────────────────────────────
+
+function getQuickPrompts(): string[] {
+  const now = new Date();
+  // Next Friday
+  const daysUntilFri = (5 - now.getDay() + 7) % 7 || 7;
+  const friday = new Date(now);
+  friday.setDate(now.getDate() + daysUntilFri);
+  const wednesday = new Date(friday);
+  wednesday.setDate(friday.getDate() + 5);
+
+  const fmt = (d: Date) => d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+
+  return [
+    `Plan a trip from NYC to SF, ${fmt(friday)}-${fmt(wednesday)}, $2000 budget`,
+    "What's the weather like in Tokyo?",
+    "Find me a budget hotel in Barcelona for 3 nights"
+  ];
 }
 
 // ── Attachment helpers ────────────────────────────────────────────────
@@ -124,20 +143,17 @@ function ToolPartView({
   if (part.state === "output-available") {
     return (
       <div className="flex justify-start">
-        <Surface className="max-w-[85%] px-4 py-2.5 rounded-xl ring ring-kumo-line">
-          <div className="flex items-center gap-2 mb-1">
-            <GearIcon size={14} className="text-kumo-inactive" />
-            <Text size="xs" variant="secondary" bold>
-              {toolName}
-            </Text>
+        <details className="max-w-[85%] w-full">
+          <summary className="flex items-center gap-2 cursor-pointer px-3 py-2 rounded-lg bg-kumo-control border border-kumo-line text-sm select-none">
+            <CheckCircleIcon size={14} className="text-kumo-success" />
+            <span className="font-medium text-kumo-default">{toolName}</span>
             <Badge variant="secondary">Done</Badge>
-          </div>
-          <div className="font-mono">
-            <Text size="xs" variant="secondary">
-              {JSON.stringify(part.output, null, 2)}
-            </Text>
-          </div>
-        </Surface>
+            <CaretDownIcon size={14} className="ml-auto text-kumo-inactive" />
+          </summary>
+          <pre className="mt-2 px-3 py-2 rounded-lg bg-kumo-control text-xs text-kumo-default whitespace-pre-wrap overflow-auto max-h-64">
+            {JSON.stringify(part.output, null, 2)}
+          </pre>
+        </details>
       </div>
     );
   }
@@ -235,7 +251,6 @@ function ToolPartView({
 function Chat() {
   const [connected, setConnected] = useState(false);
   const [input, setInput] = useState("");
-  const [showDebug, setShowDebug] = useState(false);
   const [attachments, setAttachments] = useState<Attachment[]>([]);
   const [isDragging, setIsDragging] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -341,8 +356,15 @@ function Chat() {
 
   const isStreaming = status === "streaming" || status === "submitted";
 
+  // Auto-scroll only when user is already near the bottom
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    const el = scrollContainerRef.current;
+    if (!el) return;
+    const isNearBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 150;
+    if (isNearBottom) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
   }, [messages]);
 
   // Re-focus the input after streaming ends
@@ -450,13 +472,10 @@ function Chat() {
       <header className="px-5 py-4 bg-kumo-base border-b border-kumo-line">
         <div className="max-w-3xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <h1 className="text-lg font-semibold text-kumo-default">
-              <span className="mr-2">⛅</span>Agent Starter
+            <h1 className="text-lg font-semibold text-kumo-default flex items-center gap-2">
+              <AirplaneTiltIcon size={20} />
+              Travel Planner - AI Agent
             </h1>
-            <Badge variant="secondary">
-              <ChatCircleDotsIcon size={12} weight="bold" className="mr-1" />
-              AI Chat
-            </Badge>
           </div>
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-1.5">
@@ -468,15 +487,6 @@ function Chat() {
               <Text size="xs" variant="secondary">
                 {connected ? "Connected" : "Disconnected"}
               </Text>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <BugIcon size={14} className="text-kumo-inactive" />
-              <Switch
-                checked={showDebug}
-                onCheckedChange={setShowDebug}
-                size="sm"
-                aria-label="Toggle debug mode"
-              />
             </div>
             <ThemeToggle />
             <div className="relative" ref={mcpPanelRef}>
@@ -659,7 +669,7 @@ function Chat() {
       </header>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto" ref={scrollContainerRef}>
         <div className="max-w-3xl mx-auto px-5 py-6 space-y-5">
           {messages.length === 0 && (
             <Empty
@@ -667,12 +677,7 @@ function Chat() {
               title="Start a conversation"
               contents={
                 <div className="flex flex-wrap justify-center gap-2">
-                  {[
-                    "Plan a trip from Detroit to SF, April 25-30, $2000 budget",
-                    "What's the weather like in Tokyo?",
-                    "Find me a budget hotel in Barcelona for 3 nights",
-                    "Show me my saved trips"
-                  ].map((prompt) => (
+                  {getQuickPrompts().map((prompt) => (
                     <Button
                       key={prompt}
                       variant="outline"
@@ -700,13 +705,7 @@ function Chat() {
 
             return (
               <div key={message.id} className="space-y-2">
-                {showDebug && (
-                  <pre className="text-[11px] text-kumo-subtle bg-kumo-control rounded-lg p-3 overflow-auto max-h-64">
-                    {JSON.stringify(message, null, 2)}
-                  </pre>
-                )}
-
-                {/* Tool parts */}
+                  {/* Tool parts */}
                 {message.parts.filter(isToolUIPart).map((part) => (
                   <ToolPartView
                     key={part.toolCallId}

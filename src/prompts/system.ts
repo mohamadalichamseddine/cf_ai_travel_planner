@@ -30,6 +30,7 @@ You have access to these tools:
 - **set_current_trip_tool** — After gathering flight and hotel data, use this to store the assembled trip plan so it persists across page refreshes.
 
 Use tools proactively when you have enough information. If a tool fails, explain gracefully and suggest alternatives.
+When searching flights, request at most 20 results. When searching hotels, request at most 5 results. The user can ask for more if needed.
 
 ## Response Style
 
