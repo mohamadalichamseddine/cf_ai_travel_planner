@@ -7,7 +7,7 @@ import { z } from "zod";
  */
 export function createFlightTool(env: Env) {
   return {
-    search_flights: tool({
+    search_flights_tool: tool({
       description:
         "Search for flights between two airports. Returns prices, airlines, durations, and stops from Google Flights and Kiwi.com.",
       inputSchema: z.object({
@@ -17,9 +17,7 @@ export function createFlightTool(env: Env) {
         destination: z
           .string()
           .describe("Destination airport IATA code (e.g. SFO, CDG, NRT)"),
-        departDate: z
-          .string()
-          .describe("Departure date in YYYY-MM-DD format"),
+        departDate: z.string().describe("Departure date in YYYY-MM-DD format"),
         returnDate: z
           .string()
           .optional()
@@ -52,7 +50,9 @@ export function createFlightTool(env: Env) {
       execute: async (input) => {
         const token = env.APIFY_TOKEN;
         if (!token) {
-          return { error: "APIFY_TOKEN not configured. Cannot search flights." };
+          return {
+            error: "APIFY_TOKEN not configured. Cannot search flights."
+          };
         }
 
         try {
@@ -67,7 +67,9 @@ export function createFlightTool(env: Env) {
 
           if (!response.ok) {
             const text = await response.text();
-            return { error: `Flight search failed (${response.status}): ${text}` };
+            return {
+              error: `Flight search failed (${response.status}): ${text}`
+            };
           }
 
           return await response.json();

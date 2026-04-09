@@ -14,9 +14,7 @@ import { createTravelTools } from "./tools";
 import type { TravelState } from "./types/state";
 
 const DEFAULT_STATE: TravelState = {
-  currentTrip: null,
-  savedItineraries: [],
-  preferences: {}
+  currentTrip: null
 };
 
 /**
@@ -44,7 +42,7 @@ function inlineDataUrls(messages: ModelMessage[]): ModelMessage[] {
 export class ChatAgent extends AIChatAgent<Env> {
   override maxPersistedMessages = 100;
 
-  /** Travel-specific state (trips, preferences, saved itineraries) */
+  /** Travel-specific state (current trip) */
   private getTravelState(): TravelState {
     return (this.state as unknown as TravelState) ?? DEFAULT_STATE;
   }
@@ -84,6 +82,11 @@ export class ChatAgent extends AIChatAgent<Env> {
   @callable()
   async removeServer(serverId: string) {
     await this.removeMcpServer(serverId);
+  }
+
+  @callable()
+  async resetTrip() {
+    this.setTravelState(DEFAULT_STATE);
   }
 
   override async onChatMessage(_onFinish: unknown, options?: OnChatMessageOptions) {

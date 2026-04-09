@@ -1,8 +1,9 @@
 import type { TravelState } from "../types/state";
 import { dateTool } from "./date";
 import { budgetTool } from "./budget";
-import { weatherTool } from "./weather";
-import { createItineraryTools } from "./itinerary";
+import { createWeatherTool } from "./weather/WeatherTool";
+import { OpenMeteoProvider } from "./weather/OpenMeteoProvider";
+import { createTripTool } from "./itinerary";
 import { createFlightTool } from "./flights";
 import { createHotelTool } from "./hotels";
 
@@ -18,8 +19,8 @@ export function createTravelTools(
   return {
     ...dateTool,
     ...budgetTool,
-    ...weatherTool,
-    ...createItineraryTools(getState, setState),
+    ...createWeatherTool(new OpenMeteoProvider()),
+    ...createTripTool(getState, setState),
     ...createFlightTool(env),
     ...createHotelTool(env)
   };
