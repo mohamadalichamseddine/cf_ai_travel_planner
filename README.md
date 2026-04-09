@@ -125,6 +125,8 @@ npm run deploy
 - **No multi-trip storage** -> only the current trip is persisted. Starting a new trip clears the previous one.
 - **Hotel search without dates** -> works but cannot sort by price and may return limited pricing info.
 
+For more details on known limitations and potential fixes, see [docs/limitations.md](docs/limitations.md).
+
 ## Future improvements
 
 - Structured flight/hotel result cards instead of markdown rendering
@@ -138,3 +140,7 @@ npm run deploy
 ## License
 
 MIT (bootstrapped from [cloudflare/agents-starter](https://github.com/cloudflare/agents-starter))
+
+---
+
+*Last edited: 04-09-2026*
