@@ -4,7 +4,7 @@
  */
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "cf-ai-travel-planner",
+	"name": "cf_ai_travel_planner",
 	"main": "src/index.ts",
 	"compatibility_date": "2026-03-02",
 	"compatibility_flags": [
