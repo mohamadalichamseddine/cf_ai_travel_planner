@@ -95,4 +95,14 @@ This document highlights the most impactful interactions with Claude Code CLI (A
 
 ---
 
-*Last edited: 04-09-2026*
+### 9. Landing page welcome message (UI)
+
+**Problem:** The empty chat state just showed "Start a conversation" with quick prompt buttons — no context about what the agent can do.
+
+> Prompt: "The LLM's first response includes a full welcome message with capabilities. How about we add something like that on the landing page, in addition to the default options?"
+
+**Outcome:** Replaced the bare empty state with a welcome screen showing feature cards (Flights, Hotels, Weather, Budget) and a short description, with quick prompt buttons below.
+
+---
+
+*Last edited: 04-10-2026*

@@ -672,30 +672,51 @@ function Chat() {
       <div className="flex-1 overflow-y-auto" ref={scrollContainerRef}>
         <div className="max-w-3xl mx-auto px-5 py-6 space-y-5">
           {messages.length === 0 && (
-            <Empty
-              icon={<ChatCircleDotsIcon size={32} />}
-              title="Start a conversation"
-              contents={
-                <div className="flex flex-wrap justify-center gap-2">
-                  {getQuickPrompts().map((prompt) => (
-                    <Button
-                      key={prompt}
-                      variant="outline"
-                      size="sm"
-                      disabled={isStreaming}
-                      onClick={() => {
-                        sendMessage({
-                          role: "user",
-                          parts: [{ type: "text", text: prompt }]
-                        });
-                      }}
-                    >
-                      {prompt}
-                    </Button>
-                  ))}
+            <div className="flex flex-col items-center gap-6 py-8">
+              <div className="text-center space-y-3 max-w-lg">
+                <div className="flex justify-center">
+                  <AirplaneTiltIcon size={40} className="text-kumo-accent" />
                 </div>
-              }
-            />
+                <Text variant="heading2">Welcome to AI Travel Planner</Text>
+                <Text variant="secondary" size="sm">
+                  I can help you plan your next trip. Tell me where you want to go and I'll find flights, hotels, check the weather, and track your budget.
+                </Text>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full max-w-md">
+                {[
+                  { icon: <AirplaneTiltIcon size={16} />, label: "Flights", desc: "Compare prices and routes" },
+                  { icon: <GearIcon size={16} />, label: "Hotels", desc: "Find accommodations" },
+                  { icon: <ChatCircleDotsIcon size={16} />, label: "Weather", desc: "Check forecasts" },
+                  { icon: <WrenchIcon size={16} />, label: "Budget", desc: "Track your spending" }
+                ].map((item) => (
+                  <div key={item.label} className="flex items-center gap-3 px-4 py-3 rounded-lg border border-kumo-line bg-kumo-base">
+                    <span className="text-kumo-accent">{item.icon}</span>
+                    <div>
+                      <Text size="sm" bold>{item.label}</Text>
+                      <Text size="xs" variant="secondary">{item.desc}</Text>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="flex flex-wrap justify-center gap-2">
+                {getQuickPrompts().map((prompt) => (
+                  <Button
+                    key={prompt}
+                    variant="outline"
+                    size="sm"
+                    disabled={isStreaming}
+                    onClick={() => {
+                      sendMessage({
+                        role: "user",
+                        parts: [{ type: "text", text: prompt }]
+                      });
+                    }}
+                  >
+                    {prompt}
+                  </Button>
+                ))}
+              </div>
+            </div>
           )}
 
           {messages.map((message: UIMessage, index: number) => {
