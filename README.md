@@ -2,7 +2,7 @@
 
 An AI-powered travel planning agent built on Cloudflare Workers. Plan trips through natural conversation. The agent searches real flights, hotels, and weather data, tracks your budget, and assembles a complete itinerary.
 
-**Live demo:** [cf-ai-travel-planner.MY_SUBDOMAIN.workers.dev](https://cf-ai-travel-planner.MY_SUBDOMAIN.workers.dev)
+**Live demo:** [cf_ai_travel_planner.MY_SUBDOMAIN.workers.dev](https://cf_ai_travel_planner.MY_SUBDOMAIN.workers.dev)
 
 ## What it does
 
