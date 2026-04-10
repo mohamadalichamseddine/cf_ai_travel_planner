@@ -137,6 +137,10 @@ For more details on known limitations and potential fixes, see [docs/limitations
 - Alternative flight data source (e.g. Kayak via `shahidirfan/kayak-flights-scraper`)
 - MCP server integration (currently blocked by Agents SDK schema conversion limitations)
 
+## AI prompts
+
+See [PROMPTS.md](PROMPTS.md) for key AI prompts and interactions used during development.
+
 ## License
 
 MIT (bootstrapped from [cloudflare/agents-starter](https://github.com/cloudflare/agents-starter))
