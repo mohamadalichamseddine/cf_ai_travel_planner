@@ -489,6 +489,9 @@ function Chat() {
               </Text>
             </div>
             <ThemeToggle />
+            {/* MCP server manager hidden — untested runtime feature, kept for reference.
+                Re-enable by removing this `{false && (` wrapper and its matching `)}` below. */}
+            {false && (
             <div className="relative" ref={mcpPanelRef}>
               <Button
                 variant="secondary"
@@ -654,6 +657,7 @@ function Chat() {
                 </div>
               )}
             </div>
+            )}
             <Button
               variant="secondary"
               icon={<TrashIcon size={16} />}
@@ -888,6 +892,7 @@ function Chat() {
           )}
 
           <div className="flex items-end gap-3 rounded-xl border border-kumo-line bg-kumo-base p-3 shadow-sm focus-within:ring-2 focus-within:ring-kumo-ring focus-within:border-transparent transition-shadow">
+            {/* Attach button hidden — drag-and-drop and paste-to-attach still work
             <Button
               type="button"
               variant="ghost"
@@ -898,6 +903,7 @@ function Chat() {
               disabled={!connected || isStreaming}
               className="mb-0.5"
             />
+            */}
             <InputArea
               ref={textareaRef}
               value={input}
