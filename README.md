@@ -8,7 +8,7 @@ An AI-powered travel planning agent built on Cloudflare Workers. Plan trips thro
 
 Chat with the agent to plan a trip. It can:
 
-- **Search flights** -> real prices from Skyscanner via Apify (origin, destination, dates, cabin class)
+- **Search flights** -> real prices aggregated from Google Flights, Kiwi.com, and other public fare sources via Apify (origin, destination, dates, cabin class)
 - **Search hotels** -> real listings from Booking.com via Apify (destination, dates, star rating, price range)
 - **Check weather** -> current conditions and 5-day forecast via Open-Meteo
 - **Track budget** -> calculates remaining budget after flights and hotels
@@ -26,8 +26,8 @@ Cloudflare Worker
   │
   ▼
 ChatAgent (Durable Object)
-  ├── Workers AI (Moonshotai Kimi K2.5)
-  ├── Flight search (Apify REST API → Skyscanner)
+  ├── Workers AI (Moonshotai Kimi K2.6)
+  ├── Flight search (Apify REST API → Google Flights, Kiwi.com, et al.)
   ├── Hotel search (Apify REST API → Booking.com)
   ├── Weather (Open-Meteo API)
   ├── Budget calculator
@@ -35,7 +35,7 @@ ChatAgent (Durable Object)
 ```
 
 - **Runtime:** Cloudflare Workers + Durable Objects
-- **LLM:** Workers AI - `@cf/moonshotai/kimi-k2.5`
+- **LLM:** Workers AI - `@cf/moonshotai/kimi-k2.6`
 - **Agent framework:** Cloudflare Agents SDK + Vercel AI SDK
 - **Frontend:** React + Tailwind + Kumo design system
 - **Storage:** Durable Object SQLite (conversation history, trip state)
@@ -121,7 +121,7 @@ npm run deploy
 
 - **No authentication** -> sessions are tied to a browser via `localStorage` UUID. Clearing browser data loses the session.
 - **Apify free tier limits** -> flight and hotel searches consume Apify credits. Results may be slow (up to 2 minutes) as the scraper runs synchronously.
-- **Single LLM** -> uses Workers AI with a single model (`kimi-k2.5`). No fallback if the model is unavailable.
+- **Single LLM** -> uses Workers AI with a single model (`kimi-k2.6`). No fallback if the model is unavailable or deprecated.
 - **No multi-trip storage** -> only the current trip is persisted. Starting a new trip clears the previous one.
 - **Hotel search without dates** -> works but cannot sort by price and may return limited pricing info.
 
@@ -147,4 +147,4 @@ MIT (bootstrapped from [cloudflare/agents-starter](https://github.com/cloudflare
 
 ---
 
-*Last edited: 04-10-2026*
+*Last edited: 07-27-2026*

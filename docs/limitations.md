@@ -6,7 +6,9 @@ We tested using `@cf/meta/llama-3.3-70b-instruct-fp8-fast` but it does not suppo
 
 **What happens:** When tools are passed to the model, Llama 3.3 understands the tool definitions and correctly identifies which tool to call with which parameters. However, instead of returning a structured `tool_use` response that the SDK can intercept and execute, it outputs the tool call as raw JSON text in the chat message. The SDK never sees a tool call, so the tool is never executed.
 
-**Workaround:** We use `@cf/moonshotai/kimi-k2.5` instead, which properly supports structured tool calling on Workers AI. It is still a Cloudflare-native model running on Workers AI — no external API keys required.
+**Workaround:** We use `@cf/moonshotai/kimi-k2.6` instead, which properly supports structured tool calling on Workers AI. It is still a Cloudflare-native model running on Workers AI — no external API keys required.
+
+> **Note (2026-07):** We originally used `@cf/moonshotai/kimi-k2.5`, but Cloudflare deprecated it on 2026-05-30 and later retired its auto-alias to K2.6, which caused Workers AI to return errors (`Ai._parseError`) and took the chat agent down. Migrated to `@cf/moonshotai/kimi-k2.6`, the supported successor.
 
 **Future fix:** One approach is to intercept the model's text output, parse the JSON tool call, execute the tool manually, and feed the result back to the model — essentially implementing a custom tool calling layer on top of the raw text output. Another option is to use the Workers AI REST API directly (instead of through the Vercel AI SDK) with Llama 3.3's chat template tool calling format, which may differ from what the SDK expects.
 
