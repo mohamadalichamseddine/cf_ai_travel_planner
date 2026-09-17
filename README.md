@@ -26,7 +26,7 @@ Cloudflare Worker
   │
   ▼
 ChatAgent (Durable Object)
-  ├── Workers AI (Moonshotai Kimi K2.6)
+  ├── Workers AI (Z.ai GLM-4.7-Flash)
   ├── Flight search (Apify REST API → Google Flights, Kiwi.com, et al.)
   ├── Hotel search (Apify REST API → Booking.com)
   ├── Weather (Open-Meteo API)
@@ -35,7 +35,7 @@ ChatAgent (Durable Object)
 ```
 
 - **Runtime:** Cloudflare Workers + Durable Objects
-- **LLM:** Workers AI - `@cf/moonshotai/kimi-k2.6`
+- **LLM:** Workers AI - `@cf/zai-org/glm-4.7-flash`
 - **Agent framework:** Cloudflare Agents SDK + Vercel AI SDK
 - **Frontend:** React + Tailwind + Kumo design system
 - **Storage:** Durable Object SQLite (conversation history, trip state)
@@ -121,7 +121,7 @@ npm run deploy
 
 - **No authentication** -> sessions are tied to a browser via `localStorage` UUID. Clearing browser data loses the session.
 - **Apify free tier limits** -> flight and hotel searches consume Apify credits. Results may be slow (up to 2 minutes) as the scraper runs synchronously.
-- **Single LLM** -> uses Workers AI with a single model (`kimi-k2.6`). No fallback if the model is unavailable or deprecated.
+- **Single LLM** -> uses Workers AI with a single model (`glm-4.7-flash`). No fallback if the model is unavailable, deprecated, or pulled from the Workers Free tier.
 - **No multi-trip storage** -> only the current trip is persisted. Starting a new trip clears the previous one.
 - **Hotel search without dates** -> works but cannot sort by price and may return limited pricing info.
 
@@ -137,14 +137,10 @@ For more details on known limitations and potential fixes, see [docs/limitations
 - Alternative flight data source (e.g. Kayak via `shahidirfan/kayak-flights-scraper`)
 - MCP server integration (currently blocked by Agents SDK schema conversion limitations)
 
-## AI prompts
-
-See [PROMPTS.md](PROMPTS.md) for key AI prompts and interactions used during development.
-
 ## License
 
 MIT (bootstrapped from [cloudflare/agents-starter](https://github.com/cloudflare/agents-starter))
 
 ---
 
-*Last edited: 07-27-2026*
+*Last edited: 09-16-2026*
