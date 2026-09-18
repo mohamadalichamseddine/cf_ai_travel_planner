@@ -17,6 +17,9 @@ const DEFAULT_STATE: TravelState = {
   currentTrip: null
 };
 
+/** Workers AI model powering the chat. Must support structured tool calling. */
+const CHAT_MODEL = "@cf/zai-org/glm-4.7-flash";
+
 /**
  * The AI SDK's downloadAssets step runs `new URL(data)` on every file
  * part's string data. Data URIs parse as valid URLs, so it tries to
@@ -100,7 +103,7 @@ export class ChatAgent extends AIChatAgent<Env> {
     );
 
     const result = streamText({
-      model: workersai("@cf/moonshotai/kimi-k2.6", {
+      model: workersai(CHAT_MODEL, {
         sessionAffinity: this.sessionAffinity
       }),
       system: getSystemPrompt(new Date()),
